@@ -7,3 +7,4 @@ Changelog (28/02/2023)
 
 - Support for multiple DS5 controllers on PC.
 - Removed Vita support
+- Added something interesting
