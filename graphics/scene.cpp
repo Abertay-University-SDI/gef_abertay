@@ -115,9 +115,7 @@ namespace gef
 				{
 					string_id_table.Add(materialIter->diffuse_texture);
 
-					ImageData image_data;
-					PNGLoader png_loader;
-					png_loader.Load(materialIter->diffuse_texture.c_str(), platform, image_data);
+					ImageData image_data{ materialIter->diffuse_texture.c_str() };
 					if(image_data.image() != NULL)
 					{
 						Texture* texture = Texture::Create(platform, image_data);

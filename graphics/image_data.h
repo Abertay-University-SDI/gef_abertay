@@ -5,10 +5,13 @@
 
 namespace gef
 {
+	class Platform;
+	
 	class ImageData
 	{
 	public:
 		ImageData();
+		ImageData(const char* filename);
 		~ImageData();
 
 		UInt8* image() const { return image_; }

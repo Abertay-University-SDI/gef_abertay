@@ -18,6 +18,11 @@ namespace gef
 		DeleteNull(touch_input_manager_);
 	}
 
+	void Platform::Clear() const
+	{
+		Clear(true, true, true);
+	}
+
 	std::string Platform::FormatFilename(const std::string& filename) const
 	{
 		return FormatFilename(filename.c_str());

@@ -16,6 +16,7 @@ namespace gef
 		Int32 GetNumPointLights() const { return (Int32)point_lights_.size(); }
 
 		inline const PointLight& GetPointLight(const Int32 light_num) const { return point_lights_[light_num]; }
+		inline PointLight& GetPointLight(const Int32 light_num) { return point_lights_[light_num]; }
 		inline const Colour& ambient_light_colour() const { return ambient_light_colour_; }
 		inline void set_ambient_light_colour(const Colour& colour) { ambient_light_colour_ = colour; }
 

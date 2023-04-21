@@ -8,7 +8,7 @@
 #include <graphics/shader_interface.h>
 #include <cstdlib>
 #include <cstring>
-
+#include <assert.h>
 namespace gef
 {
 	ShaderInterface::ShaderInterface() 
@@ -66,15 +66,29 @@ namespace gef
 		return (Int32)variables.size()-1;
 	}
 
+	int RoundUpToNearest(int value, int factor) {
+		assert(factor > 0);
+		if (factor == 0 || factor == 1) return value;
+		int offset = value % factor;
+		if (offset == 0) return value;
+		return value + factor - offset;
+	}
+
 	void ShaderInterface::SetVariable(std::vector<ShaderVariable>& variables, UInt8* variables_data, Int32 variable_index, const void* value, Int32 variable_count)
 	{
 		ShaderVariable& shader_variable = variables[variable_index];
-		if (variable_count == -1)
-			variable_count = shader_variable.count;
-
+		if (variable_count == -1) variable_count = shader_variable.count;
 		void* variable_data = &static_cast<UInt8*>(variables_data)[shader_variable.byte_offset];
-		Int32 data_size = GetTypeSize(shader_variable.type)*variable_count;
-		memcpy(variable_data, value, data_size);
+		Int32 data_size = GetTypeSize(shader_variable.type);
+		Int32 block_data_size = RoundUpToNearest(data_size, 16);
+		if (variable_count == 1 || data_size == block_data_size) {
+			memcpy(variable_data, value, data_size*variable_count);
+		}
+		else { 
+			for (int i = 0; i < variable_count; i++) {
+				memcpy(static_cast<std::uint8_t*>(variable_data)+block_data_size*i, static_cast<const std::uint8_t*>(value)+data_size*i, data_size);
+			}
+		}
 	}
 
 
@@ -136,16 +150,28 @@ namespace gef
 		pixel_shader_variable_data_ = AllocateVariableData(pixel_shader_variables_, pixel_shader_variable_data_size_);
 	}
 
-
 	UInt8* ShaderInterface::AllocateVariableData(std::vector<ShaderVariable>& variables, Int32& variable_data_size)
 	{
 		variable_data_size = 0;
-		for(std::vector<ShaderVariable>::iterator shader_variable = variables.begin(); shader_variable != variables.end(); ++shader_variable)
+		for(auto& shader_variable : variables)
 		{
-			shader_variable->byte_offset = variable_data_size;
-			variable_data_size += GetTypeSize(shader_variable->type)*shader_variable->count;
+			int block_pos = variable_data_size % 16;
+			int type_size = GetTypeSize(shader_variable.type);
+			if (shader_variable.count == 1) {
+				if (block_pos + type_size > 16) {
+					variable_data_size = RoundUpToNearest(variable_data_size, 16);
+				}
+				shader_variable.byte_offset = variable_data_size;
+				variable_data_size += type_size;
+			}
+			else {
+				//Align to start of next block
+				variable_data_size = RoundUpToNearest(variable_data_size, 16);
+				shader_variable.byte_offset = variable_data_size;
+				variable_data_size += RoundUpToNearest(type_size, 16) * (shader_variable.count - 1) + type_size;
+			}
 		}
-
+		variable_data_size = RoundUpToNearest(variable_data_size, 16);
 		return static_cast<UInt8*>(malloc(variable_data_size));
 	}
 

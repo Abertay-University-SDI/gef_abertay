@@ -345,8 +345,7 @@ bool OBJLoader::LoadMaterials(Platform& platform, const char* filename, std::map
 		{
 			if(iter->second.compare("") != 0)
 			{
-				gef::ImageData image_data;
-				png_loader.Load(iter->second.c_str(), platform, image_data);
+				gef::ImageData image_data{ iter->second.c_str() };
 				Texture* texture = gef::Texture::Create(platform, image_data);
 				textures.push_back(texture);
 				materials[iter->first] = (Int32)textures.size()-1;
