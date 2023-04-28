@@ -15,7 +15,7 @@ namespace gef
 	public:
 		PNGLoader();
 		~PNGLoader();
-
+		[[deprecated("PNGLoader is depreciated, use the ImageData constructor instead")]]
 		void Load(const char* filename, const Platform& platform, ImageData& image_data);
 	private:
 		void ParseRGBA(UInt8* out_image_buffer, void* png_ptr, const void* info_ptr, UInt32 width, UInt32 height);

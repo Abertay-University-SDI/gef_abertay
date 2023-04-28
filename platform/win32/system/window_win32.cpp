@@ -29,9 +29,10 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT umessage, WPARAM wparam, LPARAM lparam)
 namespace gef
 {
 
-WindowWin32::WindowWin32(HINSTANCE hinstance, UInt32 screen_width, UInt32 screen_height, bool fullscreen, WNDPROC wndproc) :
+WindowWin32::WindowWin32(HINSTANCE hinstance, UInt32 screen_width, UInt32 screen_height, WNDPROC wndproc) :
 hwnd_(NULL)
 {
+	bool fullscreen = false;
 	DEVMODE screen_settings;
 	UInt32 wnd_pos_x, wnd_pos_y;
 

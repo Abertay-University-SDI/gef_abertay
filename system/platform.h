@@ -36,8 +36,10 @@ namespace gef
 		virtual float GetFrameTime() = 0;
 		virtual void PreRender() = 0;
 		virtual void PostRender() = 0;
-		virtual void Clear() const= 0;
-        //virtual void Release() = 0;
+		virtual void Clear(const bool clear_render_target, const bool clear_depth_buffer, const bool clear_stencil_buffer) const = 0;
+		void Clear() const;
+		//virtual void Release() = 0;
+
 
 		std::string FormatFilename(const std::string& filename) const;
 		virtual std::string FormatFilename(const char* filename) const = 0;
@@ -77,6 +79,8 @@ namespace gef
 		virtual Matrix44 PerspectiveProjectionFov(const float fov, const float aspect_ratio, const float near_distance, const float far_distance) const = 0;
 		virtual Matrix44 PerspectiveProjectionFrustum(const float left, const float right, const float top, const float bottom, const float near_distance, const float far_distance) const = 0;
 		virtual Matrix44 OrthographicFrustum(const float left, const float right, const float top, const float bottom, const float near_distance, const float far_distance) const = 0;
+		virtual void SetFullscreen(bool value) { return;}
+		virtual bool Fullscreen() {return false;}
 
 		virtual void BeginScene() const = 0;
 		virtual void EndScene() const = 0;

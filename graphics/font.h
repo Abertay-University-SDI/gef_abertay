@@ -12,7 +12,7 @@ namespace gef
 	class Platform;
 	class Vector4;
 
-	enum TextJustification
+	enum class TextJustification
 	{
 		TJ_LEFT = 0,
 		TJ_CENTRE,
@@ -27,7 +27,7 @@ namespace gef
 		bool Load(const char* font_name);
 		void RenderText(SpriteRenderer* renderer, const Vector4& pos, const float scale, const UInt32 colour, const TextJustification justification, const char * text, ...) const;
 		float GetStringLength(const char * text) const;
-
+		float GetLineHeight() const;
 		inline Texture* font_texture() { return font_texture_; }
 	protected:
 		struct CharDescriptor

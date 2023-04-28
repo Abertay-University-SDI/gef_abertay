@@ -84,9 +84,7 @@ bool Font::Load(const char* font_name)
 
 		std::string font_texture_filename(font_name);
 		font_texture_filename += "_0.png";
-		PNGLoader png_loader;
-		gef::ImageData image_data;
-		png_loader.Load(font_texture_filename.c_str(), platform_, image_data);
+		gef::ImageData image_data{ font_texture_filename.c_str() };
 		font_texture_ = gef::Texture::Create(platform_, image_data);
 		platform_.AddTexture(font_texture_);
 	}
@@ -150,6 +148,8 @@ bool Font::ParseFont( std::istream& Stream, Font::Charset& CharsetDesc )
 				Converter << Value;
 				if( Key == "id" )
 					Converter >> CharID;
+				else if( CharID > 255 )
+					continue;
 				else if( Key == "x" )
 					Converter >> CharsetDesc.Chars[CharID].x;
 				else if( Key == "y" )
@@ -191,10 +191,10 @@ void Font::RenderText(SpriteRenderer* renderer, const class Vector4& pos, const 
 
 	switch(justification)
 	{
-	case TJ_CENTRE:
+	case TextJustification::TJ_CENTRE:
 		cursor.x -= string_length*0.5f*scale;
 		break;
-	case TJ_RIGHT:
+	case TextJustification::TJ_RIGHT:
 		cursor.x -= string_length*scale;
 		break;
 	default:
@@ -244,4 +244,7 @@ float Font::GetStringLength(const char * text) const
 	return length;
 }
 
+float Font::GetLineHeight() const {
+	return character_set.LineHeight;
+}
 }

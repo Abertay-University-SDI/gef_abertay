@@ -23,6 +23,8 @@ namespace gef
 		PlatformD3D11(HINSTANCE hinstance, UInt32 width, UInt32 height, bool fullscreen, bool vsync_enabled, HWND hwnd = NULL);
 		~PlatformD3D11();
 		void Resize(UInt32 width, UInt32 height);
+		void SetFullscreen(bool value) override;
+		bool Fullscreen() override;
 #if 0
 		Mesh* CreateMesh();
 		class Texture* CreateTexture(const ImageData& image_data) const;
@@ -45,7 +47,7 @@ namespace gef
 		Matrix44 PerspectiveProjectionFrustum(const float left, const float right, const float top, const float bottom, const float near_distance, const float far_distance) const;
 		Matrix44 OrthographicFrustum(const float left, const float right, const float top, const float bottom, const float near_distance, const float far_distance) const;
 //		void OrthographicFrustumLH(Matrix44& projection_matrix, const float left, const float right, const float top, const float bottom, const float near, const float far);
-		void Clear(const bool clear_render_target, const bool clear_depth_buffer, const bool clear_stencil_buffer) const;
+		void Clear(const bool clear_render_target, const bool clear_depth_buffer, const bool clear_stencil_buffer) const override;
 
 
 		void BeginScene() const;
@@ -54,7 +56,6 @@ namespace gef
 
 		void PreRender();
 		void PostRender();
-		void Clear() const;
 
 		bool Update();
 		float GetFrameTime();
@@ -71,14 +72,18 @@ namespace gef
 		inline HWND top_level_hwnd() const { return top_level_hwnd_; }
 		inline IDXGISwapChain* swap_chain() const { return swap_chain_; }
 	private:
+		static LRESULT CALLBACK WindowMessageCallback(HWND hwnd, UINT umessage, WPARAM wparam, LPARAM lparam);
+		LRESULT HandleWindowMessage(HWND hwnd, UINT umessage, WPARAM wparam, LPARAM lparam);
+
 		ID3D11RenderTargetView* GetRenderTargetView() const;
 		ID3D11DepthStencilView* GetDepthStencilView() const;
 
 		void Release();
-		bool InitDeviceAndSwapChain(bool fullscreen);
+		bool InitDeviceAndSwapChain();
 		void ReleaseDeviceAndSwapChain();
 		HRESULT CreateDepthStencilBuffer();
 		void SetupViewport() const;
+
 
 		WindowWin32* window_;
 		UInt64		clock_last_frame_;
