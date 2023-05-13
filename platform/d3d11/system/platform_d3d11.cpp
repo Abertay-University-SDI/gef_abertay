@@ -113,9 +113,11 @@ namespace gef
 		// Check if the window has resized
 		case WM_SIZE:
 		{
-			UINT width = LOWORD(lparam);
-			UINT height = HIWORD(lparam);
-			Resize(width, height);
+			if(wparam != SIZE_MINIMIZED){
+				UINT width = LOWORD(lparam);
+				UINT height = HIWORD(lparam);
+				Resize(width, height);
+			}
 			return 0;
 		}
 
